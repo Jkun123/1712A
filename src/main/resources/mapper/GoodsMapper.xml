@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.mapper.GoodsMapper">
+	
+	<!-- 分页查新 模糊查询 -->
+	<select id="queryAll" parameterType="map" resultType="com.jk.beans.Goods">
+		select gid,gname,tname,datea,status from goods g ,type t where g.tid = t.tid
+		<if test="lname!=null and lname!=''">
+			and gname like "%${lname}%"
+		</if>
+	</select>
+	
+	<!-- 种类查询 -->
+	<select id="queryTypes" resultType="com.jk.beans.Type">
+		select * from type
+	</select>
+	
+	<!-- 添加 -->
+	<insert id="addGoods" parameterType="com.jk.beans.Goods">
+		insert into goods
+		(gid,gname,tid,price)
+		values
+		(#{gid},#{gname},#{tid},#{price})
+	</insert>
+	
+	
+	<!-- 回显 -->
+	<select id="queryGoodsById" parameterType="int" resultType="com.jk.beans.Goods">
+		select gid,gname,tname,datea,price,t.tid from goods g ,type t where g.tid = t.tid
+		and gid = #{0}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="com.jk.beans.Goods" >
+		update goods set
+		gname= #{gname},tid= #{tid},price= #{price},datea= #{datea}
+		where 	gid = #{gid}
+	</update>
+	
+	<!-- 删除 改变状态 -->
+	<update id="del1" parameterType="string">
+		update goods set status = 1 where gid in(${value})
+	</update>
+	<update id="del2" parameterType="string">
+		update goods set status = 0 where gid in(${value})
+	</update>
+</mapper>
